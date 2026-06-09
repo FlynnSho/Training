@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Flynn Shore — Fitness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@200;400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #181818;
+      --bg-elevated: #1f1f1f;
+      --rule: #2e2e2e;
+      --rule-light: #3a3a3a;
+      --text: #f5f5f3;
+      --text-soft: #aaa;
+      --text-muted: #666;
+      --text-faint: #444;
+      --accent: #5b9eff;
+      --accent-bg: rgba(91,158,255,0.1);
+      --accent-rule: rgba(91,158,255,0.3);
+      --accent-glow: rgba(91,158,255,0.5);
+      --done: #3ecf8e;
+      --done-bg: rgba(62,207,142,0.08);
+      --done-rule: rgba(62,207,142,0.3);
+      --warn: #f5a623;
+      --warn-bg: rgba(245,166,35,0.1);
+      --pad: clamp(14px, 4vw, 32px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; min-width: 0; }
+    html, body { overflow-x: hidden; max-width: 100%; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Archivo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-weight: 400;
+    }
+    body::before {
+      content: '';
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none; opacity: 0.12; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .app { position: relative; z-index: 1; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--rule);
+      position: sticky; top: 0; z-index: 50; background: var(--bg);
+    }
+    .tab {
+      padding: clamp(12px, 2vw, 16px) 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(9px, 1.6vw, 11px); letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted); border: none; background: none; cursor: pointer;
+      border-bottom: 3px solid transparent; border-right: 1px solid var(--rule);
+      transition: color 0.15s, border-color 0.15s; -webkit-tap-highlight-color: transparent;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tab:last-child { border-right: none; }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Pages ── */
+    .page { display: none; padding: var(--pad); padding-bottom: calc(var(--pad) + var(--safe-b)); }
+    .page.active { display: block; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: clamp(28px, 6vw, 64px) var(--pad) clamp(20px, 4vw, 40px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(9px, 1.4vw, 10px); letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px; overflow-wrap: break-word;
+    }
+    .hero-label::before {
+      content: ''; width: 7px; height: 7px; flex-shrink: 0;
+      background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .hero h1 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(36px, 10vw, 120px);
+      line-height: 0.92; letter-spacing: -0.04em;
+      text-transform: uppercase; margin-bottom: 24px; overflow-wrap: break-word;
+    }
+    .hero h1 .light { font-family: 'Archivo', sans-serif; font-weight: 200; }
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-top: 1px solid var(--rule); padding-top: 20px; gap: 1px; background: var(--rule);
+    }
+    .hero-stat { background: var(--bg); padding: clamp(12px, 2.5vw, 16px) clamp(10px, 2vw, 20px); min-width: 0; overflow: hidden; }
+    .hero-stat-l {
+      font-family: 'JetBrains Mono', monospace; font-size: clamp(8px, 1.2vw, 9px);
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .hero-stat-v {
+      font-family: 'Archivo Black', sans-serif; font-size: clamp(18px, 4vw, 36px);
+      letter-spacing: -0.03em; line-height: 1; overflow-wrap: break-word;
+      display: flex; align-items: baseline; gap: 3px; flex-wrap: wrap;
+    }
+    .hero-stat-u { font-family: 'JetBrains Mono', monospace; font-size: clamp(8px, 1.2vw, 10px); color: var(--text-muted); }
+
+    /* ── Section headers ── */
+    .section-head {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      flex-wrap: wrap; gap: 8px;
+      padding: clamp(16px, 3vw, 24px) 0 16px; border-bottom: 1px solid var(--rule); margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Archivo Black', sans-serif; font-size: clamp(16px, 4vw, 28px);
+      letter-spacing: -0.025em; text-transform: uppercase; overflow-wrap: break-word;
+    }
+    .section-meta { font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.2vw, 10px); color: var(--text-muted); letter-spacing: 0.05em; line-height: 1.6; }
+    .section-meta strong { color: var(--accent); font-weight: 400; }
+
+    /* ── Day list ── */
+    .day-list { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+    .day-row {
+      background: var(--bg); padding: clamp(14px, 2.5vw, 18px) clamp(12px, 2vw, 20px);
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      gap: clamp(8px, 2vw, 16px); transition: background 0.15s; -webkit-tap-highlight-color: transparent; min-width: 0;
+    }
+    .day-row:hover { background: var(--bg-elevated); }
+    .day-row.done { background: var(--done-bg); }
+    .day-row-left { min-width: 0; flex: 1; overflow: hidden; }
+    .day-row-num {
+      font-family: 'JetBrains Mono', monospace; font-size: clamp(8px, 1.2vw, 9px); letter-spacing: 0.1em;
+      color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; white-space: nowrap;
+    }
+    .day-row.done .day-row-num { color: var(--done); }
+    .day-row-name {
+      font-family: 'Archivo Black', sans-serif; font-size: clamp(13px, 2.5vw, 18px);
+      letter-spacing: -0.02em; text-transform: uppercase; line-height: 1.1; margin-bottom: 4px;
+      overflow-wrap: break-word; white-space: normal;
+    }
+    .day-row-sub { font-size: clamp(10px, 1.5vw, 12px); color: var(--text-muted); white-space: normal; overflow-wrap: break-word; }
+    .day-row.done .day-row-sub { color: rgba(62,207,142,0.6); }
+    .day-row-right { display: flex; align-items: center; flex-shrink: 0; }
+    .day-done-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 11px); color: var(--done);
+      padding: 5px clamp(6px, 1.5vw, 10px); border: 1px solid var(--done-rule); border-radius: 100px; white-space: nowrap;
+    }
+    .start-btn {
+      font-family: 'Archivo Black', sans-serif; font-size: clamp(9px, 1.4vw, 11px); letter-spacing: 0.08em;
+      text-transform: uppercase; padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 18px);
+      border: 1px solid var(--text); background: var(--text); color: var(--bg); cursor: pointer;
+      transition: all 0.15s; white-space: nowrap; -webkit-tap-highlight-color: transparent;
+    }
+    .start-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .rest-row {
+      background: var(--bg); padding: clamp(12px, 2vw, 14px) clamp(12px, 2vw, 20px); border-top: 1px solid var(--rule);
+    }
+    .rest-label {
+      font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 10px); letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-faint); display: flex; align-items: center; gap: 8px; white-space: nowrap;
+    }
+    .rest-label::before { content: '—'; }
+
+    /* ── Workout overlay ── */
+    .workout-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg); z-index: 200; overflow-y: auto;
+    }
+    .workout-overlay.open { display: block; }
+    .wo-header {
+      position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--rule);
+      padding: clamp(12px, 2vw, 16px) var(--pad); display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .wo-title {
+      font-family: 'Archivo Black', sans-serif; font-size: clamp(13px, 3vw, 20px);
+      letter-spacing: -0.02em; text-transform: uppercase;
+      white-space: normal; overflow-wrap: break-word; flex: 1; min-width: 0; line-height: 1.1;
+    }
+    .wo-close {
+      font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 11px); letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px clamp(10px, 2vw, 16px); border: 1px solid var(--rule-light); background: none; color: var(--text-soft);
+      cursor: pointer; transition: all 0.15s; flex-shrink: 0; white-space: nowrap;
+    }
+    .wo-close:hover { border-color: var(--text); color: var(--text); }
+    .wo-progress-track { height: 3px; background: var(--rule); }
+    .wo-progress-fill { height: 3px; background: var(--accent); transition: width 0.3s; box-shadow: 0 0 8px var(--accent-glow); }
+    .wo-body { padding: var(--pad); padding-bottom: calc(80px + var(--safe-b)); }
+    .wo-ex-list { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+
+    /* ── Exercise card ── */
+    .ex-card { background: var(--bg); padding: clamp(14px, 3vw, 24px); position: relative; min-width: 0; }
+    .ex-card.completed { background: var(--done-bg); }
+    .ex-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; gap: clamp(8px, 2vw, 12px); flex-wrap: wrap; }
+    .ex-name {
+      font-family: 'Archivo Black', sans-serif; font-size: clamp(13px, 2.5vw, 20px);
+      letter-spacing: -0.02em; text-transform: uppercase; line-height: 1.1; flex: 1; min-width: 0; overflow-wrap: break-word;
+    }
+    .ex-card.completed .ex-name { color: var(--done); }
+    .ex-info {
+      font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 10px); color: var(--done);
+      padding: 5px clamp(8px, 1.5vw, 12px); border: 1px solid var(--done-rule);
+      border-radius: 100px; white-space: nowrap; flex-shrink: 0; align-self: flex-start;
+    }
+    .ex-card:not(.completed) .ex-info { color: var(--text-muted); border-color: var(--rule-light); }
+    .sets-row {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(44px, 10vw, 56px), 1fr));
+      gap: clamp(4px, 1.5vw, 8px); margin-bottom: 16px;
+    }
+    .set-btn {
+      aspect-ratio: 1; border: 1px solid var(--rule-light); background: var(--bg-elevated); border-radius: 6px;
+      font-family: 'Archivo Black', sans-serif; letter-spacing: -0.01em; color: var(--text-soft);
+      cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 2px; -webkit-tap-highlight-color: transparent;
+      padding: clamp(2px, 0.8vw, 4px); overflow: hidden; min-width: 0;
+    }
+    .set-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .set-btn.set-done { background: var(--done); border-color: var(--done); color: var(--bg); }
+    .set-btn .set-num { font-size: clamp(7px, 1.2vw, 8px); font-family: 'JetBrains Mono', monospace; opacity: 0.7; letter-spacing: 0.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .set-btn .set-count { font-size: clamp(11px, 3vw, 16px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+    /* ── Rep counter ── */
+    .rep-counter { display: none; flex-direction: column; gap: 12px; padding: clamp(12px, 2.5vw, 16px); background: var(--bg-elevated); border: 1px solid var(--accent-rule); margin-bottom: 16px; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .rep-counter.open { display: flex; }
+    .rep-counter-label { font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 10px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+    .rep-counter-controls { display: flex; align-items: center; gap: clamp(8px, 3vw, 16px); }
+    .rep-btn {
+      width: clamp(40px, 10vw, 52px); height: clamp(40px, 10vw, 52px); border: 1px solid var(--rule-light);
+      background: var(--bg); color: var(--text); font-family: 'Archivo Black', sans-serif; font-size: clamp(18px, 4vw, 22px);
+      cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    }
+    .rep-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .rep-btn:active { transform: scale(0.92); }
+    .rep-display { font-family: 'Archivo Black', sans-serif; font-size: clamp(36px, 10vw, 64px); letter-spacing: -0.04em; line-height: 1; flex: 1; text-align: center; overflow: hidden; }
+    .rep-confirm {
+      font-family: 'Archivo Black', sans-serif; font-size: clamp(9px, 2vw, 11px); letter-spacing: 0.06em; text-transform: uppercase;
+      padding: clamp(10px, 2vw, 12px); background: var(--accent); border: none; color: #fff;
+      cursor: pointer; width: 100%; transition: background 0.15s; -webkit-tap-highlight-color: transparent;
+      white-space: normal; overflow-wrap: break-word; line-height: 1.3;
+    }
+    .rep-confirm:hover { background: #7ab3ff; }
+    .ex-sets-summary { font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 11px); color: var(--text-muted); display: flex; flex-wrap: wrap; gap: clamp(4px, 1vw, 6px); }
+    .set-summary-chip { padding: 3px clamp(5px, 1.5vw, 8px); border: 1px solid var(--rule-light); border-radius: 100px; font-size: clamp(9px, 1.4vw, 10px); white-space: nowrap; }
+    .set-summary-chip.done { border-color: var(--done-rule); color: var(--done); }
+
+    /* ── Complete bar ── */
+    .wo-complete-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: clamp(10px, 2vw, 14px) var(--pad) calc(clamp(10px, 2vw, 14px) + var(--safe-b));
+      background: var(--bg); border-top: 1px solid var(--rule); z-index: 20;
+    }
+    .wo-complete-btn {
+      width: 100%; padding: clamp(12px, 2.5vw, 16px); font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(9px, 2vw, 13px); letter-spacing: 0.06em; text-transform: uppercase;
+      background: var(--text); border: none; color: var(--bg); cursor: pointer; transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent; white-space: normal; overflow-wrap: break-word; line-height: 1.3;
+    }
+    .wo-complete-btn:hover { background: var(--done); }
+    .wo-complete-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Calendar ── */
+    .cal-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: clamp(16px, 3vw, 20px) 0 16px; border-bottom: 1px solid var(--rule); margin-bottom: 16px; }
+    .cal-month { font-family: 'Archivo Black', sans-serif; font-size: clamp(18px, 4vw, 28px); letter-spacing: -0.025em; text-transform: uppercase; }
+    .cal-nav { display: flex; gap: 8px; flex-shrink: 0; }
+    .cal-nav-btn { font-family: 'JetBrains Mono', monospace; font-size: clamp(10px, 1.6vw, 11px); padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 14px); border: 1px solid var(--rule-light); background: none; color: var(--text-soft); cursor: pointer; transition: all 0.15s; }
+    .cal-nav-btn:hover { border-color: var(--text); color: var(--text); }
+    .cal-grid-head { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px; }
+    .cal-day-head { font-family: 'JetBrains Mono', monospace; font-size: clamp(7px, 1.4vw, 9px); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); text-align: center; padding: 6px 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Archivo', sans-serif; font-weight: 400; font-size: clamp(10px, 2.5vw, 14px); border-radius: 4px; cursor: default; position: relative; gap: 2px; overflow: hidden; }
+    .cal-cell.other-month { color: var(--text-faint); }
+    .cal-cell.today { border: 1px solid var(--accent); color: var(--accent); }
+    .cal-cell.has-workout { cursor: pointer; }
+    .cal-cell.has-workout:hover { background: var(--bg-elevated); }
+    .cal-dot { width: clamp(4px, 1vw, 5px); height: clamp(4px, 1vw, 5px); border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
+    .cal-dot.completed { background: var(--done); box-shadow: 0 0 6px rgba(62,207,142,0.5); }
+    .cal-dot.scheduled { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+    .cal-legend { display: flex; gap: clamp(10px, 3vw, 16px); flex-wrap: wrap; padding-top: 16px; border-top: 1px solid var(--rule); margin-top: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 10px); color: var(--text-muted); white-space: nowrap; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Stats ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 24px; }
+    .stat-card { background: var(--bg); padding: clamp(14px, 3vw, 24px); min-width: 0; overflow: hidden; }
+    .stat-card-l { font-family: 'JetBrains Mono', monospace; font-size: clamp(8px, 1.2vw, 9px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; white-space: normal; overflow-wrap: break-word; line-height: 1.4; }
+    .stat-card-v { font-family: 'Archivo Black', sans-serif; font-size: clamp(24px, 5vw, 48px); letter-spacing: -0.04em; line-height: 0.9; overflow-wrap: break-word; display: flex; align-items: baseline; gap: 4px; flex-wrap: wrap; }
+    .stat-card-u { font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.2vw, 10px); color: var(--text-muted); }
+    .history-list { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+    .history-item { background: var(--bg); padding: clamp(12px, 2vw, 16px) clamp(12px, 2vw, 20px); display: flex; justify-content: space-between; align-items: center; gap: 12px; min-width: 0; }
+    .history-item-left { min-width: 0; flex: 1; overflow: hidden; }
+    .history-item-name { font-family: 'Archivo Black', sans-serif; font-size: clamp(12px, 2vw, 14px); letter-spacing: -0.015em; text-transform: uppercase; margin-bottom: 3px; white-space: normal; overflow-wrap: break-word; }
+    .history-item-date { font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 10px); color: var(--text-muted); }
+    .history-item-sets { font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 11px); color: var(--done); text-align: right; white-space: nowrap; flex-shrink: 0; }
+    .empty-state { padding: clamp(32px, 6vw, 48px) var(--pad); text-align: center; font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 11px); color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--rule); }
+
+    /* ── Weight arrow controls (hero) ── */
+    .weight-ctrl { display: flex; align-items: center; gap: 5px; margin-top: 8px; }
+    .weight-btn {
+      width: 28px; height: 28px; border: 1px solid var(--rule-light);
+      background: var(--bg-elevated); color: var(--text-soft);
+      font-size: 13px; cursor: pointer; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    }
+    .weight-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .weight-btn:active { transform: scale(0.9); }
+
+    /* ── Weight tracker (stats page) ── */
+    .wt-widget { background: var(--bg-elevated); border: 1px solid var(--rule); padding: clamp(14px, 3vw, 22px); margin-bottom: 12px; }
+    .wt-current { display: flex; align-items: center; gap: clamp(12px, 3vw, 20px); flex-wrap: wrap; }
+    .wt-left { min-width: 0; }
+    .wt-val { font-family: 'Archivo Black', sans-serif; font-size: clamp(44px, 9vw, 72px); letter-spacing: -0.04em; line-height: 0.9; }
+    .wt-unit { font-family: 'JetBrains Mono', monospace; font-size: clamp(10px, 1.4vw, 12px); color: var(--text-muted); margin-left: 5px; }
+    .wt-arrows { display: flex; flex-direction: column; gap: 5px; }
+    .wt-btn { width: 40px; height: 40px; border: 1px solid var(--rule-light); background: var(--bg); color: var(--text-soft); font-family: 'Archivo Black', sans-serif; font-size: 18px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+    .wt-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .wt-btn:active { transform: scale(0.9); }
+    .wt-log-btn { font-family: 'Archivo Black', sans-serif; font-size: clamp(10px, 1.6vw, 11px); letter-spacing: 0.08em; text-transform: uppercase; padding: clamp(12px, 2vw, 14px) clamp(16px, 3vw, 22px); border: 1px solid var(--text); background: var(--text); color: var(--bg); cursor: pointer; transition: all 0.15s; white-space: nowrap; -webkit-tap-highlight-color: transparent; margin-left: auto; }
+    .wt-log-btn:hover { background: var(--accent); border-color: var(--accent); }
+    .wt-chart { width: 100%; border: 1px solid var(--rule); background: var(--bg); margin-bottom: 12px; overflow: hidden; border-radius: 4px; }
+    .wt-chart svg { width: 100%; display: block; }
+    .wt-empty { padding: clamp(20px, 4vw, 32px) var(--pad); text-align: center; font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 10px); color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--rule); margin-bottom: 12px; }
+    .wt-log { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); max-height: 260px; overflow-y: auto; margin-bottom: 24px; }
+    .wt-log-item { background: var(--bg); padding: clamp(10px, 1.5vw, 12px) clamp(12px, 2vw, 18px); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .wt-log-item:first-child { background: var(--bg-elevated); }
+    .wt-log-date { font-family: 'JetBrains Mono', monospace; font-size: clamp(9px, 1.4vw, 10px); color: var(--text-muted); }
+    .wt-log-wt { font-family: 'Archivo Black', sans-serif; font-size: clamp(15px, 2.5vw, 20px); letter-spacing: -0.025em; }
+    .wt-log-item:first-child .wt-log-wt { color: var(--accent); }
+    .wt-log-u { font-family: 'JetBrains Mono', monospace; font-size: clamp(8px, 1.2vw, 10px); color: var(--text-muted); margin-left: 3px; }
+
+
+    /* ── Exercise cues & muscle tags ── */
+    .ex-cues {
+      font-size: clamp(12px, 1.8vw, 13.5px); color: var(--text-soft);
+      line-height: 1.6; margin-bottom: 14px; overflow-wrap: break-word;
+    }
+    .ex-muscles {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+    }
+    .muscle-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(9px, 1.2vw, 10px); letter-spacing: 0.05em;
+      padding: 4px 10px; border-radius: 100px;
+      background: rgba(91,158,255,0.1); border: 1px solid rgba(91,158,255,0.25);
+      color: var(--accent); white-space: nowrap;
+    }
+
+    /* ── Exercise illustrations ── */
+    .ex-illustration {
+      width: 100%; height: clamp(90px, 16vw, 160px);
+      background: var(--bg-elevated); border: 1px solid var(--rule); border-radius: 6px;
+      margin-bottom: 14px; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .ex-illustration svg { width: 100%; height: 100%; }
+
+    /* ── Narrow breakpoints ── */
+    @media (max-width: 400px) {
+      .hero-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hero-stat-l { font-size: 7px; letter-spacing: 0.04em; }
+      .sets-row { grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); }
+      .day-row-sub { display: none; }
+      .ex-card-header { flex-direction: column; }
+      .ex-info { align-self: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <div class="hero-label">Personal fitness — 4 day split</div>
+    <h1>Train<br><span class="light">with</span> Purpose.</h1>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-l">// Weight</div>
+        <div class="hero-stat-v"><span id="hero-weight-val">62</span><span class="hero-stat-u">kg</span></div>
+        <div class="weight-ctrl">
+          <button class="weight-btn" onclick="adjustBodyWeight(-0.5)" aria-label="Decrease weight">▼</button>
+          <button class="weight-btn" onclick="adjustBodyWeight(0.5)" aria-label="Increase weight">▲</button>
+        </div>
+      </div>
+      <div class="hero-stat"><div class="hero-stat-l">// Sessions done</div><div class="hero-stat-v" id="hero-sessions">0<span class="hero-stat-u">total</span></div></div>
+      <div class="hero-stat"><div class="hero-stat-l">// This week</div><div class="hero-stat-v" id="hero-week">0<span class="hero-stat-u">/ 4</span></div></div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('plan')">// Plan</button>
+    <button class="tab" onclick="showTab('calendar')">// Calendar</button>
+    <button class="tab" onclick="showTab('stats')">// Stats</button>
+  </div>
+  <div class="page active" id="tab-plan">
+    <div class="section-head">
+      <div class="section-title">This week</div>
+      <div class="section-meta" id="week-label"></div>
+    </div>
+    <div class="day-list" id="day-list"></div>
+  </div>
+  <div class="page" id="tab-calendar">
+    <div class="cal-header">
+      <div class="cal-month" id="cal-month-label">June 2026</div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calPrev()">←</button>
+        <button class="cal-nav-btn" onclick="calNext()">→</button>
+      </div>
+    </div>
+    <div class="cal-grid-head" id="cal-grid-head"></div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--done);box-shadow:0 0 6px rgba(62,207,142,0.5)"></div> Completed</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent-glow)"></div> Scheduled</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--text-muted)"></div> Rest day</div>
+      <div class="legend-item"><div style="width:8px;height:8px;border:1px solid var(--accent);border-radius:2px"></div> Today</div>
+    </div>
+  </div>
+  <div class="page" id="tab-stats">
+    <div class="section-head"><div class="section-title">Overview</div></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-card-l">// Total sessions</div><div class="stat-card-v" id="stat-sessions">0<span class="stat-card-u">done</span></div></div>
+      <div class="stat-card"><div class="stat-card-l">// Total sets</div><div class="stat-card-v" id="stat-sets">0<span class="stat-card-u">sets</span></div></div>
+      <div class="stat-card"><div class="stat-card-l">// Total reps</div><div class="stat-card-v" id="stat-reps">0<span class="stat-card-u">reps</span></div></div>
+      <div class="stat-card"><div class="stat-card-l">// Streak</div><div class="stat-card-v" id="stat-streak">0<span class="stat-card-u">weeks</span></div></div>
+    </div>
+    <div class="section-head"><div class="section-title">History</div></div>
+    <div id="history-list"></div>
+    <div class="section-head"><div class="section-title">Weight Tracker</div></div>
+    <div class="wt-widget">
+      <div class="wt-current">
+        <div class="wt-left">
+          <div class="stat-card-l">// Current</div>
+          <div><span class="wt-val" id="wt-current-val">62</span><span class="wt-unit">kg</span></div>
+        </div>
+        <div class="wt-arrows">
+          <button class="wt-btn" onclick="adjustBodyWeight(0.5)" aria-label="Increase">▲</button>
+          <button class="wt-btn" onclick="adjustBodyWeight(-0.5)" aria-label="Decrease">▼</button>
+        </div>
+        <button class="wt-log-btn" onclick="logWeight()">Log today</button>
+      </div>
+    </div>
+    <div id="wt-chart-area"></div>
+    <div id="wt-log-area"></div>
+  </div>
+</div>
+
+<div class="workout-overlay" id="workout-overlay">
+  <div class="wo-header">
+    <div class="wo-title" id="wo-title">Workout</div>
+    <button class="wo-close" onclick="closeWorkout()">✕ Close</button>
+  </div>
+  <div class="wo-progress-track"><div class="wo-progress-fill" id="wo-progress" style="width:0%"></div></div>
+  <div class="wo-body"><div class="wo-ex-list" id="wo-ex-list"></div></div>
+  <div class="wo-complete-bar">
+    <button class="wo-complete-btn" id="wo-complete-btn" onclick="completeWorkout()" disabled>Complete workout</button>
+  </div>
+</div>
+
+<script>
+const WORKOUTS = [
+  {
+    id:'upper-push', name:'Upper Body Push', focus:'Chest · Shoulders · Triceps',
+    exercises:[
+      {name:'Dumbbell Floor Press', sets:4, reps:'8–10', weight:'15kg each'},
+      {name:'Overhead Press', sets:4, reps:'8–10', weight:'15kg each'},
+      {name:'Single-Arm Shoulder Press', sets:3, reps:'10 each side', weight:'15kg'},
+      {name:'Lateral Raises', sets:3, reps:'12–15', weight:'7kg each'},
+      {name:'Push-ups', sets:3, reps:'to failure', weight:'bodyweight'},
+      {name:'Tricep Overhead Extensions', sets:3, reps:'12', weight:'15kg (both hands)'},
+      {name:'Tricep Kickbacks', sets:3, reps:'12', weight:'7kg'},
+    ]
+  },
+  {
+    id:'lower', name:'Lower Body & Core', focus:'Quads · Hamstrings · Glutes · Core',
+    exercises:[
+      {name:'Goblet Squats', sets:4, reps:'10–12', weight:'15kg'},
+      {name:'Bulgarian Split Squats', sets:4, reps:'8–10 each leg', weight:'15kg each'},
+      {name:'Romanian Deadlifts', sets:4, reps:'10', weight:'15kg each'},
+      {name:'Walking Lunges', sets:3, reps:'12 each leg', weight:'15kg each'},
+      {name:'Single-Leg Calf Raises', sets:3, reps:'15 each leg', weight:'15kg'},
+      {name:'Lying Leg Raises', sets:3, reps:'12–15', weight:'bodyweight'},
+      {name:'Plank', sets:3, reps:'45–60 sec', weight:'bodyweight'},
+      {name:'Russian Twists', sets:3, reps:'20', weight:'7kg'},
+    ]
+  },
+  {
+    id:'upper-pull', name:'Upper Body Pull', focus:'Back · Biceps · Rear Delts',
+    exercises:[
+      {name:'Bent-Over Rows', sets:4, reps:'8–10', weight:'15kg each'},
+      {name:'Single-Arm Rows', sets:4, reps:'10 each side', weight:'15kg'},
+      {name:'Renegade Rows', sets:3, reps:'8 each side', weight:'7kg'},
+      {name:'Reverse Flyes', sets:3, reps:'12–15', weight:'7kg'},
+      {name:'Bicep Curls', sets:4, reps:'10', weight:'15kg each'},
+      {name:'Hammer Curls', sets:3, reps:'12', weight:'15kg each'},
+      {name:'Concentration Curls', sets:3, reps:'12 each arm', weight:'7kg'},
+    ]
+  },
+  {
+    id:'functional', name:'Functional Full Body', focus:'Full Body · Stability · Conditioning',
+    exercises:[
+      {name:'Dumbbell Thrusters', sets:4, reps:'8', weight:'15kg each'},
+      {name:'Renegade Row + Push-up', sets:3, reps:'6 each side', weight:'7kg'},
+      {name:'Single-Leg Romanian Deadlift', sets:3, reps:'10 each leg', weight:'15kg'},
+      {name:"Farmer's Carries", sets:3, reps:'40m', weight:'15kg each'},
+      {name:'Turkish Get-ups', sets:3, reps:'5 each side', weight:'7kg'},
+      {name:'Dumbbell Swings', sets:3, reps:'15', weight:'15kg'},
+      {name:'Side Planks', sets:3, reps:'30 sec each side', weight:'bodyweight'},
+    ]
+  }
+];
+
+const WEEK_SCHEDULE = [0,2,4,6];
+
+// Per-exercise instructions and target muscles
+const EX_DATA = {
+  'Dumbbell Floor Press': {
+    cues: 'Lie flat on your back, knees bent, feet flat. Hold dumbbells at chest height with palms facing away. Press straight up until arms are fully extended, then lower slowly back to the floor. Keep elbows at roughly 45° from your torso — not flared wide.',
+    muscles: ['Chest','Anterior Deltoid','Triceps']
+  },
+  'Overhead Press': {
+    cues: 'Stand feet shoulder-width apart. Hold dumbbells at shoulder height, palms forward. Brace your core and press both arms straight overhead until fully extended. Lower under control back to shoulder height. Avoid arching your lower back — squeeze your glutes throughout.',
+    muscles: ['Shoulders','Triceps','Upper Traps']
+  },
+  'Single-Arm Shoulder Press': {
+    cues: 'Stand holding one dumbbell at shoulder height. Press it directly overhead, keeping your torso upright — resist the temptation to lean sideways. Use your free hand for balance if needed. Lower slowly. Complete all reps on one side before switching.',
+    muscles: ['Shoulder','Triceps','Rotator Cuff']
+  },
+  'Lateral Raises': {
+    cues: 'Stand holding dumbbells at your sides, a slight bend in the elbows. Raise both arms out to the sides until level with your shoulders — no higher. Lead with your elbows, not your wrists. Lower slowly over 3 seconds. Avoid shrugging your shoulders.',
+    muscles: ['Lateral Deltoid','Rotator Cuff','Traps']
+  },
+  'Push-ups': {
+    cues: 'Start in a high plank: hands slightly wider than shoulders, body in a straight line from head to heels. Lower your chest to the floor by bending the elbows — keep them at roughly 45° rather than flared. Push back up explosively. Squeeze your core and glutes throughout.',
+    muscles: ['Chest','Triceps','Anterior Deltoid','Core']
+  },
+  'Tricep Overhead Extensions': {
+    cues: 'Stand or sit holding one dumbbell with both hands overhead, arms straight. Keeping your upper arms vertical and close to your ears, bend your elbows to lower the weight behind your head. Extend back up fully. Only the forearms move — your upper arms stay fixed.',
+    muscles: ['Triceps (long head)','Shoulder Stabilisers']
+  },
+  'Tricep Kickbacks': {
+    cues: 'Hinge forward until your torso is nearly parallel to the floor. Hold a dumbbell with one hand, upper arm locked parallel to your body. Extend your forearm back until your arm is fully straight, then slowly return. Avoid swinging. Complete all reps each side.',
+    muscles: ['Triceps (lateral & medial)','Posterior Deltoid']
+  },
+  'Goblet Squats': {
+    cues: 'Hold one dumbbell vertically at your chest with both hands cupped around the top. Stand feet shoulder-width apart, toes slightly turned out. Squat deep, keeping your chest tall and knees tracking over your toes. Drive through your heels to stand. Keep the dumbbell close to your body throughout.',
+    muscles: ['Quads','Glutes','Hamstrings','Core','Upper Back']
+  },
+  'Bulgarian Split Squats': {
+    cues: 'Stand a stride length in front of a bench. Place one foot behind you on the bench, laces down. Hold dumbbells at your sides. Lower your back knee toward the floor by bending your front leg — keep your torso upright. Drive through your front heel to return. Front knee tracks over toes.',
+    muscles: ['Quads','Glutes','Hamstrings','Hip Flexors']
+  },
+  'Romanian Deadlifts': {
+    cues: 'Stand holding dumbbells in front of your thighs, palms facing you. Hinge at the hips — not the waist — pushing them back as you lower the weights along your legs. Keep a flat back throughout. Lower until you feel a stretch in your hamstrings, then drive your hips forward to return.',
+    muscles: ['Hamstrings','Glutes','Lower Back','Traps']
+  },
+  'Walking Lunges': {
+    cues: 'Hold dumbbells at your sides. Take a large step forward and lower your back knee toward the floor. Your front knee should be directly over your ankle. Push through your front heel to bring your back foot forward into the next step. Keep your torso tall and core braced throughout.',
+    muscles: ['Quads','Glutes','Hamstrings','Calves']
+  },
+  'Single-Leg Calf Raises': {
+    cues: 'Stand on one foot, holding a dumbbell in the opposite hand for load. Lightly touch a wall for balance. Rise up onto the ball of your foot as high as possible, pause at the top, then lower slowly over 3 seconds. Keep the standing leg slightly bent to protect your knee.',
+    muscles: ['Gastrocnemius','Soleus','Tibialis Anterior']
+  },
+  'Lying Leg Raises': {
+    cues: 'Lie flat on your back, legs together, hands flat by your sides. Keeping your legs straight, raise them to vertical, then lower slowly without letting them touch the floor. Keep your lower back pressed into the floor throughout — if it arches, bend your knees slightly.',
+    muscles: ['Hip Flexors','Lower Abs','Rectus Abdominis']
+  },
+  'Plank': {
+    cues: 'Rest on your forearms and toes, body forming a straight line from head to heels. Squeeze your core, glutes, and quads — nothing should sag or pike up. Breathe steadily. Hold for the target time. To increase difficulty: lift one foot slightly off the floor or tap alternate shoulders.',
+    muscles: ['Core','Transverse Abdominis','Glutes','Shoulders']
+  },
+  'Russian Twists': {
+    cues: 'Sit with knees bent, feet lifted slightly off the floor. Hold a dumbbell with both hands, lean back slightly to create a V-shape with your torso and thighs. Rotate the weight to one side, then the other — this is one rep. Keep your spine long; avoid rounding.',
+    muscles: ['Obliques','Rectus Abdominis','Hip Flexors']
+  },
+  'Bent-Over Rows': {
+    cues: 'Stand with feet shoulder-width apart. Hinge forward at the hips until your torso is roughly parallel to the floor. Hold dumbbells hanging below your chest. Pull both up to your ribcage, leading with your elbows — squeeze your shoulder blades together at the top. Lower under control.',
+    muscles: ['Lats','Rhomboids','Rear Delts','Biceps','Lower Traps']
+  },
+  'Single-Arm Rows': {
+    cues: 'Place one knee and hand on a bench for support. Hold a dumbbell in the other hand, arm hanging. Pull it up to your hip, leading with your elbow — think "elbow to ceiling." Pause and squeeze at the top. Lower fully. Keep your hips and shoulders square throughout.',
+    muscles: ['Lats','Rhomboids','Rear Deltoid','Biceps']
+  },
+  'Renegade Rows': {
+    cues: 'Start in a high plank position with each hand gripping a dumbbell. Row one dumbbell up to your hip while stabilising with the other arm. Lower it, then repeat on the other side. Keep your hips square — resist rotating. This is as much a core exercise as a back one.',
+    muscles: ['Lats','Rhomboids','Triceps','Core','Chest']
+  },
+  'Reverse Flyes': {
+    cues: 'Hinge forward until your torso is nearly horizontal. Hold dumbbells hanging below your chest, a slight bend in your elbows. Raise both arms out to the sides in a wide arc until level with your shoulders, squeezing your shoulder blades together. Lower slowly. Keep the movement deliberate — no swinging.',
+    muscles: ['Rear Deltoid','Rhomboids','Middle Traps','Rotator Cuff']
+  },
+  'Bicep Curls': {
+    cues: 'Stand with dumbbells at your sides, palms forward. Keeping your upper arms pinned to your sides, curl both weights up toward your shoulders. Squeeze hard at the top. Lower slowly over 3 seconds — resist the urge to let them drop. Avoid swinging your torso.',
+    muscles: ['Biceps Brachii','Brachialis','Brachioradialis']
+  },
+  'Hammer Curls': {
+    cues: 'Stand holding dumbbells with a neutral grip — palms facing each other, like hammers. Keeping upper arms fixed, curl both up simultaneously. The neutral grip shifts emphasis to the brachialis and forearm. Lower slowly. Can be done alternating for a longer time under tension.',
+    muscles: ['Brachialis','Biceps Brachii','Brachioradialis','Forearms']
+  },
+  'Concentration Curls': {
+    cues: 'Sit on the edge of a bench, legs wide. Hold a dumbbell in one hand and brace your elbow against the inside of your thigh. Curl the weight up fully, squeezing hard at the top. Lower very slowly. The leg brace eliminates swinging — this is about pure isolation.',
+    muscles: ['Biceps Brachii (short head)','Brachialis']
+  },
+  'Dumbbell Thrusters': {
+    cues: 'Hold dumbbells at shoulder height. Squat deeply, then explosively drive up through your legs and use that momentum to press the dumbbells overhead simultaneously. Lock out your arms at the top. Lower the weights back to shoulders as you descend into the next squat. Keep the movement fluid.',
+    muscles: ['Quads','Glutes','Shoulders','Triceps','Core']
+  },
+  'Renegade Row + Push-up': {
+    cues: 'In a plank gripping dumbbells, perform a push-up first. At the top, row one dumbbell to your hip, lower it, then row the other side. That is one full rep. Keep your core rigid throughout — your hips should not rotate or sag. This is a demanding compound movement.',
+    muscles: ['Chest','Lats','Triceps','Core','Rear Delts']
+  },
+  'Single-Leg Romanian Deadlift': {
+    cues: 'Stand on one leg, holding a dumbbell in the opposite hand. Hinge at the hip, extending your free leg behind you as a counterbalance, lowering the weight toward the floor. Keep your back flat. Return by driving your standing hip forward. Focus on balance before adding load.',
+    muscles: ['Hamstrings','Glutes','Lower Back','Core']
+  },
+  "Farmer's Carries": {
+    cues: 'Hold heavy dumbbells at your sides, shoulders packed down and back. Walk in a straight line with a tall spine, short controlled steps, looking straight ahead. Do not allow the weights to swing. Breathe steadily. This builds grip, core stability, and total-body strength simultaneously.',
+    muscles: ['Grip','Traps','Core','Glutes','Calves','Entire Body']
+  },
+  'Turkish Get-ups': {
+    cues: 'Lie on your back holding a dumbbell pressed up with one arm, eye on the weight throughout. Roll onto your elbow, then your hand. Sweep your leg through to a lunge position, then stand. Reverse every step to return to the floor. Keep the arm locked vertically the whole time. Start light.',
+    muscles: ['Shoulders','Core','Hips','Glutes','Triceps']
+  },
+  'Dumbbell Swings': {
+    cues: 'Stand with feet hip-width apart, holding one dumbbell with both hands. Hinge at the hips to swing it back between your legs, then drive your hips explosively forward to swing it up to shoulder height. The power comes from your hips, not your arms — think of it as a hip hinge, not a squat.',
+    muscles: ['Glutes','Hamstrings','Lower Back','Core','Shoulders']
+  },
+  'Side Planks': {
+    cues: 'Lie on your side. Prop yourself up on your forearm, elbow directly under your shoulder. Stack your feet and raise your hips off the floor so your body forms a straight line. Hold without letting your hips sag or rotate. To increase difficulty, raise your top leg or extend your top arm upward.',
+    muscles: ['Obliques','Transverse Abdominis','Glutes','Shoulder Stabilisers']
+  }
+};
+
+
+function loadData(){ try { return JSON.parse(localStorage.getItem('fs_fitness')||'{}'); } catch(e){ return {}; } }
+function saveData(d){ localStorage.setItem('fs_fitness', JSON.stringify(d)); }
+let DB = loadData();
+
+function todayStr(){ const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`; }
+function dateStr(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function parseDate(s){ return new Date(s+'T12:00:00'); }
+function dayOfWeek(s){ const d=parseDate(s).getDay(); return d===0?6:d-1; }
+function getWeekStart(s){ const dt=parseDate(s), dow=dt.getDay()===0?6:dt.getDay()-1; dt.setDate(dt.getDate()-dow); return dateStr(dt); }
+function addDays(s,n){ const d=parseDate(s); d.setDate(d.getDate()+n); return dateStr(d); }
+function formatDate(s){ return parseDate(s).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}); }
+
+function getScheduledWorkoutForDate(ds){
+  const dow=dayOfWeek(ds);
+  if(!WEEK_SCHEDULE.includes(dow)) return null;
+  const slotInWeek=WEEK_SCHEDULE.indexOf(dow);
+  const epochStart=parseDate('2026-06-01');
+  const weeksSince=Math.floor((parseDate(ds)-epochStart)/(7*86400000));
+  const totalSlot=weeksSince*4+slotInWeek;
+  return WORKOUTS[((totalSlot%4)+4)%4];
+}
+function getWorkoutForDate(d){
+  const s=(DB.sessions||{})[d];
+  if(s?.workoutId) return WORKOUTS.find(w=>w.id===s.workoutId)||null;
+  return getScheduledWorkoutForDate(d);
+}
+
+let activeDate=null, activeWorkout=null, setStates=[], openRepSet=null;
+
+function showTab(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>{ if(t.getAttribute('onclick')===`showTab('${id}')`) t.classList.add('active'); });
+  if(id==='calendar') renderCalendar();
+  if(id==='stats') renderStats();
+}
+
+function renderPlan(){
+  const today=todayStr(), weekStart=getWeekStart(today);
+  document.getElementById('week-label').innerHTML=`Week of ${formatDate(weekStart)}`;
+  const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  let html='';
+  for(let i=0;i<7;i++){
+    const d=addDays(weekStart,i), dow=dayOfWeek(d), isToday=d===today;
+    const workout=getWorkoutForDate(d), session=(DB.sessions||{})[d], isDone=session?.completedAt;
+    if(workout){
+      html+=`<div class="day-row${isDone?' done':''}" id="dayrow-${d}">
+        <div class="day-row-left">
+          <div class="day-row-num">${dayNames[dow]}${isToday?' · Today':''}</div>
+          <div class="day-row-name">${workout.name}</div>
+          <div class="day-row-sub">${workout.focus}</div>
+        </div>
+        <div class="day-row-right">
+          ${isDone?'<div class="day-done-badge">✓ Done</div>':`<button class="start-btn" onclick="startWorkout('${d}')">${isToday?'Start':'View'}</button>`}
+        </div>
+      </div>`;
+    } else {
+      html+=`<div class="rest-row"><div class="rest-label">${dayNames[dow]}${isToday?' · Today':''} &nbsp;Rest day</div></div>`;
+    }
+  }
+  document.getElementById('day-list').innerHTML=html;
+  const sessions=DB.sessions||{};
+  const totalDone=Object.values(sessions).filter(s=>s.completedAt).length;
+  const weekDates=Array.from({length:7},(_,i)=>addDays(weekStart,i));
+  const weekDone=weekDates.filter(d=>sessions[d]?.completedAt).length;
+  document.getElementById('hero-sessions').innerHTML=`${totalDone}<span class="hero-stat-u">total</span>`;
+  document.getElementById('hero-week').innerHTML=`${weekDone}<span class="hero-stat-u">/ 4</span>`;
+}
+
+function startWorkout(date){
+  activeDate=date; activeWorkout=getWorkoutForDate(date);
+  if(!activeWorkout) return;
+  DB.sessions=DB.sessions||{};
+  if(!DB.sessions[date]){
+    DB.sessions[date]={ workoutId:activeWorkout.id, sets:activeWorkout.exercises.map(ex=>Array.from({length:ex.sets},()=>({done:false,reps:0}))), completedAt:null };
+    saveData(DB);
+  }
+  setStates=DB.sessions[date].sets.map(exSets=>exSets.map(s=>({...s})));
+  openRepSet=null;
+  document.getElementById('wo-title').textContent=activeWorkout.name;
+  renderWorkout();
+  document.getElementById('workout-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeWorkout(){
+  document.getElementById('workout-overlay').classList.remove('open');
+  document.body.style.overflow='';
+  activeDate=null; activeWorkout=null; openRepSet=null;
+  renderPlan();
+}
+
+function completeWorkout(){
+  if(!activeDate||!activeWorkout) return;
+  DB.sessions[activeDate].completedAt=new Date().toISOString();
+  saveData(DB); closeWorkout();
+}
+
+function renderWorkout(){
+  if(!activeWorkout) return;
+  const totalSets=setStates.reduce((s,ex)=>s+ex.length,0);
+  const doneSets=setStates.reduce((s,ex)=>s+ex.filter(set=>set.done).length,0);
+  document.getElementById('wo-progress').style.width=(totalSets?Math.round(doneSets/totalSets*100):0)+'%';
+  const allDone=doneSets===totalSets;
+  const btn=document.getElementById('wo-complete-btn');
+  btn.disabled=!allDone;
+  btn.textContent=allDone?`✓ Complete workout (${doneSets}/${totalSets} sets)`:`Complete workout — ${doneSets}/${totalSets} sets done`;
+  let html='';
+  activeWorkout.exercises.forEach((ex,ei)=>{
+    const exSets=setStates[ei], exDone=exSets.every(s=>s.done);
+    html+=`<div class="ex-card${exDone?' completed':''}">
+      <div class="ex-illustration">${getIllustration(ex.name)}</div>
+      <div class="ex-card-header">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-info">${exDone?'✓ Done':ex.weight}</div>
+      </div>
+      ${(()=>{ const d=EX_DATA[ex.name]; if(!d) return ''; return `<div class="ex-muscles">${d.muscles.map(m=>`<span class="muscle-tag">${m}</span>`).join('')}</div><p class="ex-cues">${d.cues}</p>`; })()}
+      <div class="sets-row">`;
+    exSets.forEach((s,si)=>{
+      html+=`<div class="set-btn${s.done?' set-done':''}" onclick="openRepCounter(${ei},${si})">
+        <span class="set-num">SET ${si+1}</span>
+        <span class="set-count">${s.done?s.reps:ex.reps.split('–')[0]}</span>
+      </div>`;
+    });
+    html+=`</div>`;
+    if(openRepSet&&openRepSet.exIdx===ei){
+      const si=openRepSet.setIdx, cur=setStates[ei][si].reps||(parseInt(ex.reps)||10);
+      html+=`<div class="rep-counter open">
+        <div class="rep-counter-label">// Set ${si+1} — log your reps</div>
+        <div class="rep-counter-controls">
+          <button class="rep-btn" onclick="adjustReps(${ei},${si},-1)">−</button>
+          <div class="rep-display" id="rep-disp-${ei}-${si}">${cur}</div>
+          <button class="rep-btn" onclick="adjustReps(${ei},${si},1)">+</button>
+        </div>
+        <button class="rep-confirm" id="rep-confirm-${ei}-${si}" onclick="confirmSet(${ei},${si})">Log ${cur} rep${cur!==1?'s':''} &nbsp;→</button>
+      </div>`;
+    }
+    const doneSetsEx=exSets.filter(s=>s.done);
+    if(doneSetsEx.length){
+      html+=`<div class="ex-sets-summary">`;
+      exSets.forEach((s,si)=>{ html+=`<span class="set-summary-chip${s.done?' done':''}">S${si+1}${s.done?' · '+s.reps+'r':''}</span>`; });
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+  });
+  document.getElementById('wo-ex-list').innerHTML=html;
+}
+
+function openRepCounter(exIdx,setIdx){
+  if(openRepSet&&openRepSet.exIdx===exIdx&&openRepSet.setIdx===setIdx){ openRepSet=null; }
+  else { if(!setStates[exIdx][setIdx].reps){ setStates[exIdx][setIdx].reps=parseInt(activeWorkout.exercises[exIdx].reps)||10; } openRepSet={exIdx,setIdx}; }
+  renderWorkout();
+}
+
+function adjustReps(exIdx,setIdx,delta){
+  setStates[exIdx][setIdx].reps=Math.max(0,(setStates[exIdx][setIdx].reps||0)+delta);
+  const val=setStates[exIdx][setIdx].reps;
+  const el=document.getElementById(`rep-disp-${exIdx}-${setIdx}`);
+  if(el) el.textContent=val;
+  const btn=document.getElementById(`rep-confirm-${exIdx}-${setIdx}`);
+  if(btn) btn.textContent=`Log ${val} rep${val!==1?'s':''} \u00a0→`;
+}
+
+function confirmSet(exIdx,setIdx){
+  setStates[exIdx][setIdx].done=true;
+  if(!setStates[exIdx][setIdx].reps) setStates[exIdx][setIdx].reps=parseInt(activeWorkout.exercises[exIdx].reps)||10;
+  openRepSet=null;
+  DB.sessions[activeDate].sets=setStates.map(ex=>ex.map(s=>({...s})));
+  saveData(DB); renderWorkout();
+}
+
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+function renderCalendar(){
+  const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-grid-head').innerHTML=dayNames.map(d=>`<div class="cal-day-head">${d}</div>`).join('');
+  document.getElementById('cal-month-label').textContent=`${months[calMonth]} ${calYear}`;
+  const firstDay=new Date(calYear,calMonth,1), lastDay=new Date(calYear,calMonth+1,0);
+  const startDow=firstDay.getDay()===0?6:firstDay.getDay()-1;
+  const today=todayStr(), sessions=DB.sessions||{};
+  let html='';
+  for(let i=0;i<startDow;i++){ const d=new Date(calYear,calMonth,1-startDow+i); html+=`<div class="cal-cell other-month">${d.getDate()}</div>`; }
+  for(let day=1;day<=lastDay.getDate();day++){
+    const d=dateStr(new Date(calYear,calMonth,day)), isToday=d===today;
+    const session=sessions[d], workout=getWorkoutForDate(d);
+    const isCompleted=session?.completedAt, isScheduled=workout&&!isCompleted&&d>=today, isPast=workout&&!isCompleted&&d<today;
+    const dot=isCompleted?`<div class="cal-dot completed"></div>`:isScheduled?`<div class="cal-dot scheduled"></div>`:isPast?`<div class="cal-dot"></div>`:'';
+    html+=`<div class="cal-cell${isToday?' today':''}${workout?' has-workout':''}" title="${workout?workout.name:'Rest day'}">${day}${dot}</div>`;
+  }
+  const trailing=(7-(startDow+lastDay.getDate())%7)%7;
+  for(let i=1;i<=trailing;i++) html+=`<div class="cal-cell other-month">${i}</div>`;
+  document.getElementById('cal-grid').innerHTML=html;
+}
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+
+function getBodyWeight(){ return DB.weight || 62; }
+
+function adjustBodyWeight(delta){
+  DB.weight = Math.round((Math.max(30, Math.min(250, getBodyWeight() + delta))) * 10) / 10;
+  saveData(DB);
+  renderBodyWeight();
+}
+
+function renderBodyWeight(){
+  const w = getBodyWeight();
+  const heroEl = document.getElementById('hero-weight-val');
+  if(heroEl) heroEl.textContent = w;
+  const statEl = document.getElementById('wt-current-val');
+  if(statEl) statEl.textContent = w;
+}
+
+function logWeight(){
+  if(!DB.weightLog) DB.weightLog = [];
+  const today = todayStr();
+  DB.weightLog = DB.weightLog.filter(e=>e.date!==today);
+  DB.weightLog.push({date:today, weight:getBodyWeight()});
+  DB.weightLog.sort((a,b)=>b.date.localeCompare(a.date));
+  saveData(DB);
+  renderWeightTracker();
+}
+
+function buildWeightChart(){
+  const log = [...(DB.weightLog||[])].sort((a,b)=>a.date.localeCompare(b.date)).slice(-20);
+  if(log.length < 2) return `<div class="wt-empty">Log at least 2 entries to see your chart</div>`;
+  const W=400, H=110, ml=38, mr=14, mt=12, mb=22;
+  const pw=W-ml-mr, ph=H-mt-mb;
+  const weights=log.map(e=>e.weight);
+  const minW=Math.min(...weights), maxW=Math.max(...weights);
+  const span=Math.max(maxW-minW, 1.5);
+  const yMin=minW-span*0.25, yMax=maxW+span*0.25;
+  const xFor=i=>ml+(i/(log.length-1))*pw;
+  const yFor=w=>mt+ph-((w-yMin)/(yMax-yMin))*ph;
+  const pathD=log.map((e,i)=>`${i===0?'M':'L'}${xFor(i).toFixed(1)},${yFor(e.weight).toFixed(1)}`).join(' ');
+  // gradient fill under line
+  const fillD=pathD+` L${xFor(log.length-1).toFixed(1)},${(mt+ph).toFixed(1)} L${xFor(0).toFixed(1)},${(mt+ph).toFixed(1)} Z`;
+  // y axis labels (3 levels)
+  const yTicks=[yMin,yMin+(yMax-yMin)*0.5,yMax].map(v=>parseFloat(v.toFixed(1)));
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  svg+=`<defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5b9eff" stop-opacity="0.18"/><stop offset="100%" stop-color="#5b9eff" stop-opacity="0"/></linearGradient></defs>`;
+  // grid lines
+  yTicks.forEach(yt=>{
+    const yp=yFor(yt);
+    svg+=`<line x1="${ml}" y1="${yp.toFixed(1)}" x2="${W-mr}" y2="${yp.toFixed(1)}" stroke="#2e2e2e" stroke-width="1"/>`;
+    svg+=`<text x="${ml-4}" y="${(yp+3.5).toFixed(1)}" text-anchor="end" fill="#555" font-size="8" font-family="monospace">${yt}</text>`;
+  });
+  // fill
+  svg+=`<path d="${fillD}" fill="url(#wg)"/>`;
+  // line
+  svg+=`<path d="${pathD}" fill="none" stroke="#5b9eff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  // dots
+  log.forEach((e,i)=>{
+    const x=xFor(i).toFixed(1), y=yFor(e.weight).toFixed(1), isLast=i===log.length-1;
+    svg+=`<circle cx="${x}" cy="${y}" r="${isLast?5:3}" fill="${isLast?'#5b9eff':'#1f1f1f'}" stroke="#5b9eff" stroke-width="${isLast?0:1.5}"/>`;
+    if(isLast){
+      const tx=parseFloat(x), lw=`${e.weight}kg`, textX=tx+mr>W-50?tx-8:tx+8, anchor=tx+mr>W-50?'end':'start';
+      svg+=`<text x="${textX}" y="${(parseFloat(y)-8).toFixed(1)}" text-anchor="${anchor}" fill="#5b9eff" font-size="9" font-family="monospace" font-weight="bold">${lw}</text>`;
+    }
+  });
+  // x axis date labels (first and last)
+  svg+=`<text x="${xFor(0).toFixed(1)}" y="${H-4}" text-anchor="start" fill="#444" font-size="8" font-family="monospace">${formatDate(log[0].date)}</text>`;
+  if(log.length>1) svg+=`<text x="${xFor(log.length-1).toFixed(1)}" y="${H-4}" text-anchor="end" fill="#444" font-size="8" font-family="monospace">${formatDate(log[log.length-1].date)}</text>`;
+  svg+=`</svg>`;
+  return `<div class="wt-chart">${svg}</div>`;
+}
+
+function renderWeightTracker(){
+  renderBodyWeight();
+  const chartEl=document.getElementById('wt-chart-area');
+  const logEl=document.getElementById('wt-log-area');
+  if(!chartEl||!logEl) return;
+  chartEl.innerHTML=buildWeightChart();
+  const log=[...(DB.weightLog||[])].sort((a,b)=>b.date.localeCompare(a.date));
+  if(!log.length){ logEl.innerHTML=''; return; }
+  let html=`<div class="wt-log">`;
+  log.slice(0,12).forEach(e=>{
+    html+=`<div class="wt-log-item"><div class="wt-log-date">${formatDate(e.date)}</div><div class="wt-log-wt">${e.weight}<span class="wt-log-u">kg</span></div></div>`;
+  });
+  html+=`</div>`;
+  logEl.innerHTML=html;
+}
+
+function renderStats(){
+  const sessions=DB.sessions||{};
+  const completed=Object.entries(sessions).filter(([,s])=>s.completedAt);
+  const totalSets=completed.reduce((_s,[,s])=>_s+(s.sets||[]).reduce((a,ex)=>a+ex.filter(st=>st.done).length,0),0);
+  const totalReps=completed.reduce((_s,[,s])=>_s+(s.sets||[]).reduce((a,ex)=>a+ex.reduce((b,st)=>b+(st.done?st.reps:0),0),0),0);
+  const weekStart=getWeekStart(todayStr());
+  let streak=0;
+  for(let w=0;w<52;w++){
+    const ws=addDays(weekStart,-w*7);
+    const weekDates=Array.from({length:7},(_,i)=>addDays(ws,i));
+    const weekDone=weekDates.filter(d=>sessions[d]?.completedAt).length;
+    if(weekDone>0) streak++;
+    else if(w===0) break;
+    else break;
+  }
+  document.getElementById('stat-sessions').innerHTML=`${completed.length}<span class="stat-card-u">done</span>`;
+  document.getElementById('stat-sets').innerHTML=`${totalSets}<span class="stat-card-u">sets</span>`;
+  document.getElementById('stat-reps').innerHTML=`${totalReps}<span class="stat-card-u">reps</span>`;
+  document.getElementById('stat-streak').innerHTML=`${streak}<span class="stat-card-u">weeks</span>`;
+  const histEl=document.getElementById('history-list');
+  if(!completed.length){ histEl.innerHTML=`<div class="empty-state">No sessions completed yet</div>`; return; }
+  const sorted=completed.sort((a,b)=>b[0].localeCompare(a[0]));
+  let html=`<div class="history-list">`;
+  sorted.forEach(([date,session])=>{
+    const wo=WORKOUTS.find(w=>w.id===session.workoutId);
+    const sets=(session.sets||[]).reduce((a,ex)=>a+ex.filter(s=>s.done).length,0);
+    const reps=(session.sets||[]).reduce((a,ex)=>a+ex.reduce((b,s)=>b+(s.done?s.reps:0),0),0);
+    html+=`<div class="history-item"><div class="history-item-left"><div class="history-item-name">${wo?wo.name:'Workout'}</div><div class="history-item-date">${formatDate(date)}</div></div><div class="history-item-sets">${sets} sets · ${reps} reps</div></div>`;
+  });
+  html+=`</div>`;
+  histEl.innerHTML=html;
+  renderWeightTracker();
+}
+
+// ── SVG Illustrations (articulated joints) ───────────────
+const IL = {
+'Dumbbell Floor Press': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="98" x2="190" y2="98" stroke="#3a3a3a" stroke-width="1.5"/><rect x="52" y="84" width="88" height="11" rx="5" fill="none" stroke="#5b9eff" stroke-width="2"/><circle cx="152" cy="78" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="74" y1="87" x2="66" y2="70" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="66" cy="70" r="3" fill="#5b9eff"/><line x1="66" y1="70" x2="60" y2="55" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="50" y="49" width="20" height="7" rx="2" fill="#3ecf8e"/><rect x="48" y="50" width="4" height="5" rx="1" fill="#3ecf8e"/><rect x="70" y="50" width="4" height="5" rx="1" fill="#3ecf8e"/><line x1="108" y1="87" x2="118" y2="70" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="118" cy="70" r="3" fill="#5b9eff"/><line x1="118" y1="70" x2="125" y2="55" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="115" y="49" width="20" height="7" rx="2" fill="#3ecf8e"/><rect x="113" y="50" width="4" height="5" rx="1" fill="#3ecf8e"/><rect x="135" y="50" width="4" height="5" rx="1" fill="#3ecf8e"/><line x1="57" y1="94" x2="46" y2="108" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="46" cy="108" r="3" fill="#5b9eff"/><line x1="46" y1="108" x2="34" y2="97" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="68" y1="94" x2="58" y2="108" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="58" cy="108" r="3" fill="#5b9eff"/><line x1="58" y1="108" x2="44" y2="97" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="116" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">FLOOR PRESS</text></svg>`,
+'Overhead Press': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="22" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="31" x2="100" y2="72" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="44" x2="76" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="76" cy="52" r="3" fill="#5b9eff"/><line x1="76" y1="52" x2="68" y2="28" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="56" y="21" width="16" height="7" rx="2" fill="#3ecf8e"/><rect x="54" y="22" width="4" height="5" rx="1" fill="#3ecf8e"/><rect x="72" y="22" width="4" height="5" rx="1" fill="#3ecf8e"/><line x1="100" y1="44" x2="124" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="124" cy="52" r="3" fill="#5b9eff"/><line x1="124" y1="52" x2="132" y2="28" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="128" y="21" width="16" height="7" rx="2" fill="#3ecf8e"/><rect x="126" y="22" width="4" height="5" rx="1" fill="#3ecf8e"/><rect x="144" y="22" width="4" height="5" rx="1" fill="#3ecf8e"/><line x1="100" y1="72" x2="88" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="88" cy="90" r="3" fill="#5b9eff"/><line x1="88" y1="90" x2="84" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="72" x2="112" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="112" cy="90" r="3" fill="#5b9eff"/><line x1="112" y1="90" x2="116" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="14" x2="100" y2="6" stroke="#5b9eff" stroke-width="1.5" stroke-dasharray="2,2"/><polygon points="100,2 96,9 104,9" fill="#5b9eff"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">OVERHEAD PRESS</text></svg>`,
+'Single-Arm Shoulder Press': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="22" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="31" x2="100" y2="72" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="44" x2="122" y2="50" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="122" cy="50" r="3" fill="#5b9eff"/><line x1="122" y1="50" x2="130" y2="26" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="122" y="19" width="16" height="7" rx="2" fill="#3ecf8e"/><line x1="100" y1="44" x2="78" y2="50" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="78" cy="50" r="3" fill="#5b9eff"/><line x1="78" y1="50" x2="74" y2="70" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="72" x2="88" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="88" cy="90" r="3" fill="#5b9eff"/><line x1="88" y1="90" x2="84" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="72" x2="112" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="112" cy="90" r="3" fill="#5b9eff"/><line x1="112" y1="90" x2="116" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">SINGLE-ARM PRESS</text></svg>`,
+'Lateral Raises': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="22" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="31" x2="100" y2="72" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="44" x2="68" y2="46" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="68" cy="46" r="3" fill="#5b9eff"/><line x1="68" y1="46" x2="55" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="43" y="47" width="14" height="6" rx="2" fill="#3ecf8e"/><line x1="100" y1="44" x2="132" y2="46" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="132" cy="46" r="3" fill="#5b9eff"/><line x1="132" y1="46" x2="145" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="143" y="47" width="14" height="6" rx="2" fill="#3ecf8e"/><line x1="100" y1="72" x2="88" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="88" cy="90" r="3" fill="#5b9eff"/><line x1="88" y1="90" x2="84" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="72" x2="112" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="112" cy="90" r="3" fill="#5b9eff"/><line x1="112" y1="90" x2="116" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">LATERAL RAISES</text></svg>`,
+'Push-ups': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="100" x2="190" y2="100" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="160" cy="50" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="48" y1="74" x2="151" y2="58" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="118" y1="63" x2="112" y2="74" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="112" cy="74" r="3" fill="#5b9eff"/><line x1="112" y1="74" x2="106" y2="99" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="80" y1="69" x2="74" y2="80" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="74" cy="80" r="3" fill="#5b9eff"/><line x1="74" y1="80" x2="68" y2="99" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="48" y1="74" x2="40" y2="88" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="40" cy="88" r="3" fill="#5b9eff"/><line x1="40" y1="88" x2="34" y2="100" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="52" y1="73" x2="44" y2="87" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="44" cy="87" r="3" fill="#5b9eff"/><line x1="44" y1="87" x2="38" y2="100" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="114" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">PUSH-UPS</text></svg>`,
+'Tricep Overhead Extensions': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="22" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="31" x2="100" y2="72" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="44" x2="86" y2="34" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="86" cy="34" r="3" fill="#5b9eff"/><line x1="86" y1="34" x2="92" y2="20" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="44" x2="114" y2="34" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="114" cy="34" r="3" fill="#5b9eff"/><line x1="114" y1="34" x2="108" y2="20" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="86" y="12" width="28" height="8" rx="3" fill="#3ecf8e"/><rect x="84" y="13" width="4" height="6" rx="1" fill="#3ecf8e"/><rect x="112" y="13" width="4" height="6" rx="1" fill="#3ecf8e"/><line x1="100" y1="72" x2="88" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="88" cy="90" r="3" fill="#5b9eff"/><line x1="88" y1="90" x2="84" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="72" x2="112" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="112" cy="90" r="3" fill="#5b9eff"/><line x1="112" y1="90" x2="116" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">TRICEP EXTENSIONS</text></svg>`,
+'Tricep Kickbacks': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="148" cy="48" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="140" y1="56" x2="88" y2="72" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="106" y1="65" x2="96" y2="72" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="96" cy="72" r="3" fill="#5b9eff"/><line x1="96" y1="72" x2="72" y2="66" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="56" y="62" width="18" height="7" rx="2" fill="#3ecf8e"/><line x1="118" y1="62" x2="118" y2="75" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="118" cy="75" r="3" fill="#5b9eff"/><line x1="118" y1="75" x2="130" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="88" y1="72" x2="80" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="80" cy="90" r="3" fill="#5b9eff"/><line x1="80" y1="90" x2="74" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="90" y1="73" x2="100" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="100" cy="90" r="3" fill="#5b9eff"/><line x1="100" y1="90" x2="100" y2="110" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">TRICEP KICKBACK</text></svg>`,
+'Goblet Squats': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="22" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="31" x2="96" y2="68" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="98" y1="44" x2="82" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="82" cy="52" r="3" fill="#5b9eff"/><line x1="82" y1="52" x2="82" y2="60" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="44" x2="116" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="116" cy="52" r="3" fill="#5b9eff"/><line x1="116" y1="52" x2="116" y2="60" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="78" y="58" width="40" height="9" rx="3" fill="#3ecf8e"/><line x1="96" y1="68" x2="72" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="72" cy="84" r="3.5" fill="#5b9eff"/><line x1="72" y1="84" x2="68" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="96" y1="68" x2="120" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="120" cy="84" r="3.5" fill="#5b9eff"/><line x1="120" y1="84" x2="124" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">GOBLET SQUAT</text></svg>`,
+'Bulgarian Split Squats': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><rect x="128" y="76" width="52" height="9" rx="2" fill="#2a2a2a" stroke="#555" stroke-width="1.5"/><circle cx="90" cy="20" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="90" y1="29" x2="90" y2="68" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="90" y1="46" x2="70" y2="54" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="70" cy="54" r="3" fill="#5b9eff"/><line x1="70" y1="54" x2="66" y2="72" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="56" y="70" width="14" height="6" rx="2" fill="#3ecf8e"/><line x1="90" y1="46" x2="110" y2="54" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="110" cy="54" r="3" fill="#5b9eff"/><line x1="110" y1="54" x2="114" y2="72" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="110" y="70" width="14" height="6" rx="2" fill="#3ecf8e"/><line x1="90" y1="68" x2="68" y2="86" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="68" cy="86" r="3.5" fill="#5b9eff"/><line x1="68" y1="86" x2="62" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="90" y1="68" x2="116" y2="82" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="116" cy="82" r="3.5" fill="#5b9eff"/><line x1="116" y1="82" x2="138" y2="78" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">BULGARIAN SPLIT SQUAT</text></svg>`,
+'Romanian Deadlifts': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="142" cy="28" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="134" y1="36" x2="80" y2="62" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="106" y1="50" x2="98" y2="58" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="98" cy="58" r="3" fill="#5b9eff"/><line x1="98" y1="58" x2="92" y2="78" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="82" y="76" width="16" height="6" rx="2" fill="#3ecf8e"/><line x1="118" y1="45" x2="110" y2="53" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="110" cy="53" r="3" fill="#5b9eff"/><line x1="110" y1="53" x2="106" y2="73" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="96" y="71" width="16" height="6" rx="2" fill="#3ecf8e"/><line x1="80" y1="62" x2="76" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="76" cy="84" r="3.5" fill="#5b9eff"/><line x1="76" y1="84" x2="72" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="82" y1="63" x2="90" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="90" cy="84" r="3.5" fill="#5b9eff"/><line x1="90" y1="84" x2="92" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">ROMANIAN DEADLIFT</text></svg>`,
+'Walking Lunges': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="104" cy="20" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="104" y1="29" x2="104" y2="68" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="104" y1="44" x2="84" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="84" cy="52" r="3" fill="#5b9eff"/><line x1="84" y1="52" x2="80" y2="70" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="70" y="68" width="14" height="6" rx="2" fill="#3ecf8e"/><line x1="104" y1="44" x2="124" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="124" cy="52" r="3" fill="#5b9eff"/><line x1="124" y1="52" x2="128" y2="70" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="116" y="68" width="14" height="6" rx="2" fill="#3ecf8e"/><line x1="104" y1="68" x2="78" y2="86" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="78" cy="86" r="3.5" fill="#5b9eff"/><line x1="78" y1="86" x2="70" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="104" y1="68" x2="124" y2="86" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="124" cy="86" r="3.5" fill="#5b9eff"/><line x1="124" y1="86" x2="138" y2="108" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">WALKING LUNGES</text></svg>`,
+'Single-Leg Calf Raises': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="108" x2="190" y2="108" stroke="#3a3a3a" stroke-width="1.5"/><line x1="52" y1="8" x2="52" y2="108" stroke="#444" stroke-width="2"/><circle cx="100" cy="18" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="27" x2="100" y2="74" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="44" x2="76" y2="50" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="76" cy="50" r="3" fill="#5b9eff"/><line x1="76" y1="50" x2="52" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="44" x2="122" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="122" cy="52" r="3" fill="#5b9eff"/><line x1="122" y1="52" x2="124" y2="72" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="116" y="70" width="14" height="6" rx="2" fill="#3ecf8e"/><line x1="100" y1="74" x2="96" y2="98" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="96" cy="98" r="3.5" fill="#5b9eff"/><line x1="96" y1="98" x2="93" y2="108" stroke="#3ecf8e" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="74" x2="114" y2="88" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="114" cy="88" r="3.5" fill="#5b9eff"/><line x1="114" y1="88" x2="122" y2="80" stroke="#ccc" stroke-width="2" stroke-linecap="round"/><text x="105" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">CALF RAISES</text></svg>`,
+'Lying Leg Raises': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="96" x2="190" y2="96" stroke="#3a3a3a" stroke-width="1.5"/><line x1="42" y1="88" x2="148" y2="88" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><circle cx="158" cy="84" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="50" y1="88" x2="46" y2="64" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="46" cy="64" r="3.5" fill="#5b9eff"/><line x1="46" y1="64" x2="44" y2="44" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="42" y1="88" x2="38" y2="64" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="38" cy="64" r="3.5" fill="#5b9eff"/><line x1="38" y1="64" x2="36" y2="44" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="50" y1="88" x2="26" y2="94" stroke="#3a3a3a" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="42" y1="88" x2="18" y2="94" stroke="#3a3a3a" stroke-width="1.5" stroke-dasharray="3,2"/><text x="100" y="113" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">LEG RAISES</text></svg>`,
+'Plank': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="96" x2="190" y2="96" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="164" cy="56" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="46" y1="76" x2="155" y2="64" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="76" y1="74" x2="68" y2="86" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="68" cy="86" r="3" fill="#5b9eff"/><line x1="68" y1="86" x2="84" y2="89" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="116" y1="70" x2="108" y2="84" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="108" cy="84" r="3" fill="#5b9eff"/><line x1="108" y1="84" x2="124" y2="87" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="46" y1="76" x2="38" y2="88" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="38" cy="88" r="3" fill="#5b9eff"/><line x1="38" y1="88" x2="32" y2="96" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="24" cy="28" r="12" fill="none" stroke="#3ecf8e" stroke-width="1.5"/><line x1="24" y1="18" x2="24" y2="28" stroke="#3ecf8e" stroke-width="1.5" stroke-linecap="round"/><line x1="24" y1="28" x2="31" y2="32" stroke="#3ecf8e" stroke-width="1.5" stroke-linecap="round"/><text x="100" y="112" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">PLANK HOLD</text></svg>`,
+'Russian Twists': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="96" x2="190" y2="96" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="40" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="49" x2="100" y2="78" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="78" x2="74" y2="68" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="74" cy="68" r="3.5" fill="#5b9eff"/><line x1="74" y1="68" x2="60" y2="76" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="78" x2="126" y2="68" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="126" cy="68" r="3.5" fill="#5b9eff"/><line x1="126" y1="68" x2="140" y2="76" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="60" x2="118" y2="66" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="118" cy="66" r="3" fill="#5b9eff"/><line x1="118" y1="66" x2="130" y2="74" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="126" y="70" width="18" height="8" rx="3" fill="#3ecf8e"/><text x="100" y="112" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">RUSSIAN TWISTS</text></svg>`,
+'Bent-Over Rows': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="142" cy="26" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="134" y1="34" x2="78" y2="60" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="49" x2="94" y2="62" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="94" cy="62" r="3" fill="#5b9eff"/><line x1="94" y1="62" x2="88" y2="78" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="78" y="76" width="16" height="6" rx="2" fill="#3ecf8e"/><line x1="114" y1="44" x2="108" y2="57" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="108" cy="57" r="3" fill="#5b9eff"/><line x1="108" y1="57" x2="102" y2="74" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="92" y="72" width="16" height="6" rx="2" fill="#3ecf8e"/><line x1="90" y1="72" x2="90" y2="58" stroke="#5b9eff" stroke-width="1.2" stroke-dasharray="2,2"/><polygon points="90,54 86,61 94,61" fill="#5b9eff"/><line x1="78" y1="60" x2="72" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="72" cy="84" r="3.5" fill="#5b9eff"/><line x1="72" y1="84" x2="68" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="80" y1="61" x2="90" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="90" cy="84" r="3.5" fill="#5b9eff"/><line x1="90" y1="84" x2="92" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">BENT-OVER ROWS</text></svg>`,
+'Single-Arm Rows': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><rect x="112" y="70" width="58" height="9" rx="2" fill="#2a2a2a" stroke="#555" stroke-width="1.5"/><circle cx="154" cy="36" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="146" y1="44" x2="95" y2="64" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="132" y1="52" x2="132" y2="64" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="132" cy="64" r="3" fill="#5b9eff"/><line x1="132" y1="64" x2="140" y2="72" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="108" y1="58" x2="102" y2="70" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="102" cy="70" r="3" fill="#5b9eff"/><line x1="102" y1="70" x2="96" y2="86" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="86" y="84" width="16" height="6" rx="2" fill="#3ecf8e"/><line x1="98" y1="82" x2="98" y2="68" stroke="#5b9eff" stroke-width="1.2" stroke-dasharray="2,2"/><polygon points="98,64 94,71 102,71" fill="#5b9eff"/><line x1="95" y1="64" x2="88" y2="88" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="88" cy="88" r="3.5" fill="#5b9eff"/><line x1="88" y1="88" x2="84" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">SINGLE-ARM ROW</text></svg>`,
+'Renegade Rows': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="104" x2="190" y2="104" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="162" cy="52" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="46" y1="72" x2="153" y2="60" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="118" y1="64" x2="112" y2="76" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="112" cy="76" r="3" fill="#5b9eff"/><line x1="112" y1="76" x2="108" y2="90" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="98" y="88" width="18" height="7" rx="2" fill="#3ecf8e"/><line x1="80" y1="68" x2="74" y2="56" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="74" cy="56" r="3" fill="#5b9eff"/><line x1="74" y1="56" x2="70" y2="70" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="60" y="68" width="18" height="7" rx="2" fill="#3ecf8e"/><line x1="46" y1="72" x2="38" y2="96" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="38" cy="96" r="3" fill="#5b9eff"/><line x1="38" y1="96" x2="32" y2="103" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="114" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">RENEGADE ROWS</text></svg>`,
+'Reverse Flyes': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="140" cy="26" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="132" y1="34" x2="80" y2="60" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="106" y1="48" x2="90" y2="40" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="90" cy="40" r="3" fill="#5b9eff"/><line x1="90" y1="40" x2="76" y2="34" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="62" y="29" width="16" height="6" rx="2" fill="#3ecf8e"/><line x1="118" y1="43" x2="132" y2="36" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="132" cy="36" r="3" fill="#5b9eff"/><line x1="132" y1="36" x2="148" y2="32" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="146" y="27" width="16" height="6" rx="2" fill="#3ecf8e"/><line x1="80" y1="60" x2="74" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="74" cy="84" r="3.5" fill="#5b9eff"/><line x1="74" y1="84" x2="70" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="82" y1="61" x2="92" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="92" cy="84" r="3.5" fill="#5b9eff"/><line x1="92" y1="84" x2="94" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">REVERSE FLYES</text></svg>`,
+'Bicep Curls': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="20" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="29" x2="100" y2="72" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="44" x2="120" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="120" cy="52" r="3" fill="#5b9eff"/><line x1="120" y1="52" x2="116" y2="34" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="108" y="26" width="16" height="7" rx="2" fill="#3ecf8e"/><line x1="100" y1="44" x2="78" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="78" cy="52" r="3" fill="#5b9eff"/><line x1="78" y1="52" x2="74" y2="74" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="64" y="72" width="16" height="6" rx="2" fill="#3ecf8e" opacity="0.4"/><line x1="100" y1="72" x2="88" y2="90" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="88" cy="90" r="3.5" fill="#5b9eff"/><line x1="88" y1="90" x2="84" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="72" x2="112" y2="90" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="112" cy="90" r="3.5" fill="#5b9eff"/><line x1="112" y1="90" x2="116" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">BICEP CURLS</text></svg>`,
+'Hammer Curls': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="20" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="29" x2="100" y2="72" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="44" x2="122" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="122" cy="52" r="3" fill="#5b9eff"/><line x1="122" y1="52" x2="120" y2="34" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="115" y="22" width="10" height="20" rx="2" fill="#3ecf8e"/><rect x="112" y="20" width="16" height="5" rx="2" fill="#3ecf8e" opacity="0.8"/><rect x="112" y="37" width="16" height="5" rx="2" fill="#3ecf8e" opacity="0.8"/><line x1="100" y1="44" x2="78" y2="52" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="78" cy="52" r="3" fill="#5b9eff"/><line x1="78" y1="52" x2="76" y2="72" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="100" y1="72" x2="88" y2="90" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="88" cy="90" r="3.5" fill="#5b9eff"/><line x1="88" y1="90" x2="84" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="72" x2="112" y2="90" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="112" cy="90" r="3.5" fill="#5b9eff"/><line x1="112" y1="90" x2="116" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">HAMMER CURLS</text></svg>`,
+'Concentration Curls': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><rect x="66" y="76" width="68" height="9" rx="2" fill="#2a2a2a" stroke="#555" stroke-width="1.5"/><circle cx="118" cy="28" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="112" y1="36" x2="100" y2="70" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="70" x2="78" y2="66" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="78" cy="66" r="3.5" fill="#5b9eff"/><line x1="78" y1="66" x2="72" y2="90" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="72" cy="90" r="3" fill="#5b9eff"/><line x1="72" y1="90" x2="68" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="70" x2="118" y2="66" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="118" cy="66" r="3.5" fill="#5b9eff"/><line x1="118" y1="66" x2="122" y2="90" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="122" cy="90" r="3" fill="#5b9eff"/><line x1="122" y1="90" x2="126" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="52" x2="84" y2="62" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="84" cy="62" r="3" fill="#5b9eff"/><line x1="84" y1="62" x2="80" y2="46" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="70" y="40" width="16" height="6" rx="2" fill="#3ecf8e"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">CONCENTRATION CURLS</text></svg>`,
+'Dumbbell Thrusters': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="14" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="23" x2="100" y2="70" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="38" x2="74" y2="28" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="74" cy="28" r="3" fill="#5b9eff"/><line x1="74" y1="28" x2="66" y2="14" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="52" y="7" width="18" height="7" rx="2" fill="#3ecf8e"/><line x1="100" y1="38" x2="126" y2="28" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="126" cy="28" r="3" fill="#5b9eff"/><line x1="126" y1="28" x2="134" y2="14" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="130" y="7" width="18" height="7" rx="2" fill="#3ecf8e"/><line x1="100" y1="70" x2="80" y2="88" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="80" cy="88" r="3.5" fill="#5b9eff"/><line x1="80" y1="88" x2="76" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="70" x2="120" y2="88" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="120" cy="88" r="3.5" fill="#5b9eff"/><line x1="120" y1="88" x2="124" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="165" y1="82" x2="165" y2="28" stroke="#5b9eff" stroke-width="1.5" stroke-dasharray="3,2"/><polygon points="165,22 161,30 169,30" fill="#5b9eff"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">THRUSTERS</text></svg>`,
+'Renegade Row + Push-up': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="106" x2="190" y2="106" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="162" cy="52" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="46" y1="74" x2="153" y2="60" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="118" y1="64" x2="112" y2="76" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="112" cy="76" r="3" fill="#5b9eff"/><line x1="112" y1="76" x2="108" y2="92" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="98" y="90" width="18" height="7" rx="2" fill="#3ecf8e"/><line x1="80" y1="70" x2="72" y2="58" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="72" cy="58" r="3" fill="#5b9eff"/><line x1="72" y1="58" x2="66" y2="72" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="56" y="70" width="18" height="7" rx="2" fill="#3ecf8e"/><line x1="46" y1="74" x2="38" y2="96" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="38" cy="96" r="3" fill="#5b9eff"/><line x1="38" y1="96" x2="32" y2="105" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="116" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">RENEGADE ROW+PUSH-UP</text></svg>`,
+'Single-Leg Romanian Deadlift': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="132" cy="24" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="124" y1="32" x2="72" y2="62" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="98" y1="48" x2="90" y2="56" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="90" cy="56" r="3" fill="#5b9eff"/><line x1="90" y1="56" x2="84" y2="76" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="74" y="74" width="16" height="6" rx="2" fill="#3ecf8e"/><line x1="72" y1="62" x2="70" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="70" cy="84" r="3.5" fill="#5b9eff"/><line x1="70" y1="84" x2="68" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="72" y1="62" x2="108" y2="54" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="108" cy="54" r="3.5" fill="#5b9eff"/><line x1="108" y1="54" x2="138" y2="60" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">SINGLE-LEG RDL</text></svg>`,
+"Farmer's Carries": `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="100" cy="16" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="25" x2="100" y2="72" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="42" x2="76" y2="50" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="76" cy="50" r="3" fill="#5b9eff"/><line x1="76" y1="50" x2="72" y2="76" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="60" y="74" width="18" height="22" rx="2" fill="#3ecf8e"/><rect x="57" y="72" width="24" height="5" rx="2" fill="#3ecf8e" opacity="0.7"/><rect x="57" y="96" width="24" height="5" rx="2" fill="#3ecf8e" opacity="0.7"/><line x1="100" y1="42" x2="124" y2="50" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="124" cy="50" r="3" fill="#5b9eff"/><line x1="124" y1="50" x2="128" y2="76" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="122" y="74" width="18" height="22" rx="2" fill="#3ecf8e"/><rect x="119" y="72" width="24" height="5" rx="2" fill="#3ecf8e" opacity="0.7"/><rect x="119" y="96" width="24" height="5" rx="2" fill="#3ecf8e" opacity="0.7"/><line x1="100" y1="72" x2="82" y2="90" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="82" cy="90" r="3.5" fill="#5b9eff"/><line x1="82" y1="90" x2="78" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="100" y1="72" x2="116" y2="88" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="116" cy="88" r="3.5" fill="#5b9eff"/><line x1="116" y1="88" x2="120" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">FARMER CARRIES</text></svg>`,
+'Turkish Get-ups': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="96" x2="190" y2="96" stroke="#3a3a3a" stroke-width="1.5"/><line x1="52" y1="88" x2="124" y2="68" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><circle cx="132" cy="60" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="100" y1="80" x2="90" y2="92" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="90" cy="92" r="3" fill="#5b9eff"/><line x1="90" y1="92" x2="78" y2="88" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="124" y1="68" x2="130" y2="50" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="130" cy="50" r="3" fill="#5b9eff"/><line x1="130" y1="50" x2="134" y2="30" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="126" y="20" width="16" height="7" rx="2" fill="#3ecf8e"/><line x1="52" y1="88" x2="66" y2="72" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="66" cy="72" r="3.5" fill="#5b9eff"/><line x1="66" y1="72" x2="82" y2="90" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="52" y1="89" x2="24" y2="93" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="93" r="3.5" fill="#5b9eff"/><line x1="24" y1="93" x2="14" y2="95" stroke="#ccc" stroke-width="2" stroke-linecap="round"/><text x="100" y="112" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">TURKISH GET-UP</text></svg>`,
+'Dumbbell Swings': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="110" x2="190" y2="110" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="118" cy="26" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="110" y1="34" x2="80" y2="60" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="94" y1="48" x2="88" y2="36" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="88" cy="36" r="3" fill="#5b9eff"/><line x1="88" y1="36" x2="80" y2="26" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="98" y1="50" x2="92" y2="38" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="92" cy="38" r="3" fill="#5b9eff"/><line x1="92" y1="38" x2="86" y2="28" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><rect x="72" y="18" width="22" height="9" rx="3" fill="#3ecf8e"/><line x1="80" y1="60" x2="68" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="68" cy="84" r="3.5" fill="#5b9eff"/><line x1="68" y1="84" x2="64" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><line x1="82" y1="62" x2="94" y2="84" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><circle cx="94" cy="84" r="3.5" fill="#5b9eff"/><line x1="94" y1="84" x2="96" y2="110" stroke="#ccc" stroke-width="2.5" stroke-linecap="round"/><text x="100" y="119" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">DUMBBELL SWINGS</text></svg>`,
+'Side Planks': `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="96" x2="190" y2="96" stroke="#3a3a3a" stroke-width="1.5"/><circle cx="156" cy="48" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/><line x1="42" y1="86" x2="147" y2="56" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/><line x1="42" y1="86" x2="30" y2="92" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="30" cy="92" r="3" fill="#5b9eff"/><line x1="30" y1="92" x2="50" y2="94" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="96" y1="72" x2="100" y2="60" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="100" cy="60" r="3" fill="#5b9eff"/><line x1="100" y1="60" x2="102" y2="46" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><line x1="42" y1="86" x2="36" y2="92" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="36" cy="92" r="3" fill="#5b9eff"/><line x1="36" y1="92" x2="30" y2="96" stroke="#ccc" stroke-width="2.2" stroke-linecap="round"/><circle cx="176" cy="26" r="12" fill="none" stroke="#3ecf8e" stroke-width="1.5"/><line x1="176" y1="16" x2="176" y2="26" stroke="#3ecf8e" stroke-width="1.5" stroke-linecap="round"/><line x1="176" y1="26" x2="182" y2="30" stroke="#3ecf8e" stroke-width="1.5" stroke-linecap="round"/><text x="100" y="112" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">SIDE PLANK</text></svg>`
+};
+
+function getIllustration(name){
+  return IL[name] || `<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="38" r="9" fill="none" stroke="#5b9eff" stroke-width="2"/>
+    <line x1="100" y1="47" x2="100" y2="72" stroke="#5b9eff" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="100" y1="56" x2="82" y2="64" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="82" cy="64" r="3" fill="#5b9eff"/>
+    <line x1="82" y1="64" x2="78" y2="78" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="56" x2="118" y2="64" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="118" cy="64" r="3" fill="#5b9eff"/>
+    <line x1="118" y1="64" x2="122" y2="78" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="72" x2="88" y2="90" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="88" cy="90" r="3" fill="#5b9eff"/>
+    <line x1="88" y1="90" x2="84" y2="106" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+    <line x1="100" y1="72" x2="112" y2="90" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="112" cy="90" r="3" fill="#5b9eff"/>
+    <line x1="112" y1="90" x2="116" y2="106" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
+  </svg>`;
+}
+
+let resizeTimer;
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>{
+    // Re-render workout if overlay is open so rep counter stays correctly positioned
+    if(document.getElementById('workout-overlay').classList.contains('open')){
+      renderWorkout();
+    }
+  }, 150);
+});
+
+renderPlan();
+renderBodyWeight();
+</script>
+</body>
+</html>
